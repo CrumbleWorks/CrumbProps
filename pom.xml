@@ -8,7 +8,8 @@
     <packaging>jar</packaging>
 
     <name>CrumbProps</name>
-    <url>forge.crumbleworks.org/crumbProps</url>
+    <description>A utility to manage property files.</description>
+    <url>https://github.com/CrumbleWorks/CrumbProps</url>
 
     <licenses>
         <license>
