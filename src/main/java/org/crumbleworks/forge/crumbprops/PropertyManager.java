@@ -18,113 +18,126 @@ import org.slf4j.LoggerFactory;
  * @since 1.0
  */
 public class PropertyManager {
-	private static final Logger logger = LoggerFactory.getLogger(PropertyManager.class);
 
-	// Map<object, PropertyFileProxy>
-	private Map<Object, PropertyFileProxy> managedPropertyFiles = new HashMap<>();
+    private static final Logger logger = LoggerFactory
+            .getLogger(PropertyManager.class);
 
-	/**
-	 * Add object to the managed property files.
-	 * 
-	 * @param object an instance of a {@link PropertyFile}-annotated class
-	 */
-	public void add(Object object) {
-		if (!object.getClass().isAnnotationPresent(PropertyFile.class)) {
-			throw new AnnotationNotPresentException(object.getClass());
-		}
+    // Map<object, PropertyFileProxy>
+    private Map<Object, PropertyFileProxy> managedPropertyFiles = new HashMap<>();
 
-		PropertyFileProxy pfp;
-		try {
-			pfp = new PropertyFileProxy(object,
-					(Converters) object.getClass().getAnnotation(PropertyFile.class).converter().getConstructor()
-							.newInstance(),
-					(Storage) object.getClass().getAnnotation(PropertyFile.class).storage().getConstructor()
-							.newInstance());
-			managedPropertyFiles.put(object, pfp);
-		} catch (InstantiationException | IllegalAccessException | InvocationTargetException
-				| NoSuchMethodException e) {
-			throw new RuntimeException(e);
-		}
+    /**
+     * Add object to the managed property files.
+     * 
+     * @param object
+     *            an instance of a {@link PropertyFile}-annotated class
+     */
+    public void add(Object object) {
+        if(!object.getClass().isAnnotationPresent(PropertyFile.class)) {
+            throw new AnnotationNotPresentException(object.getClass());
+        }
 
-		logger.debug("Added {} to manager {}", object, this);
-	}
+        PropertyFileProxy pfp;
+        try {
+            pfp = new PropertyFileProxy(object,
+                    (Converters)object.getClass()
+                            .getAnnotation(PropertyFile.class).converter()
+                            .getConstructor()
+                            .newInstance(),
+                    (Storage)object.getClass()
+                            .getAnnotation(PropertyFile.class).storage()
+                            .getConstructor()
+                            .newInstance());
+            managedPropertyFiles.put(object, pfp);
+        } catch(InstantiationException | IllegalAccessException
+                | InvocationTargetException
+                | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
 
-	/**
-	 * Remove managed property file from manager.
-	 * 
-	 * @param object object an instance of a {@link PropertyFile}-annotated class
-	 * @throws ObjectNotManagedException
-	 */
-	public void remove(Object object) {
-		Object prevValue = managedPropertyFiles.remove(object);
+        logger.debug("Added {} to manager {}", object, this);
+    }
 
-		if (logger.isDebugEnabled() && (prevValue != null)) {
-			logger.debug("Removed {} from manager {}", object, this);
-		} else {
-			logger.debug("Couldn't remove {}, was not managed by {}", object, this);
-		}
-	}
+    /**
+     * Remove managed property file from manager.
+     * 
+     * @param object
+     *            object an instance of a {@link PropertyFile}-annotated class
+     * @throws ObjectNotManagedException
+     */
+    public void remove(Object object) {
+        Object prevValue = managedPropertyFiles.remove(object);
 
-	public void removeAll() {
-		managedPropertyFiles = new HashMap<>();
-		logger.debug("Removed all managed objects from {}", this);
-	}
+        if(logger.isDebugEnabled() && (prevValue != null)) {
+            logger.debug("Removed {} from manager {}", object, this);
+        } else {
+            logger.debug("Couldn't remove {}, was not managed by {}", object,
+                    this);
+        }
+    }
 
-	/**
-	 * Save managed property file to storage.
-	 * 
-	 * <p>
-	 * Storage is defined via the {@link PropertyFile} annotation.
-	 * 
-	 * @param object object an instance of a {@link PropertyFile}-annotated class
-	 * @throws ObjectNotManagedException
-	 * @throws StorageIOException
-	 */
-	public void save(Object object) throws ObjectNotManagedException, StorageIOException {
-		if (!isManaged(object)) {
-			throw new ObjectNotManagedException(object);
-		}
+    public void removeAll() {
+        managedPropertyFiles = new HashMap<>();
+        logger.debug("Removed all managed objects from {}", this);
+    }
 
-		managedPropertyFiles.get(object).save();
+    /**
+     * Save managed property file to storage.
+     * <p>
+     * Storage is defined via the {@link PropertyFile} annotation.
+     * 
+     * @param object
+     *            object an instance of a {@link PropertyFile}-annotated class
+     * @throws ObjectNotManagedException
+     * @throws StorageIOException
+     */
+    public void save(Object object)
+            throws ObjectNotManagedException, StorageIOException {
+        if(!isManaged(object)) {
+            throw new ObjectNotManagedException(object);
+        }
 
-		logger.debug("Saved {} to storage", object);
-	}
+        managedPropertyFiles.get(object).save();
 
-	public void saveAll() throws StorageIOException {
-		managedPropertyFiles.values().forEach(this::save);
-	}
+        logger.debug("Saved {} to storage", object);
+    }
 
-	/**
-	 * Loads managed property file from storage.
-	 * 
-	 * <p>
-	 * Storage is defined via the {@link PropertyFile} annotation.
-	 * 
-	 * @param object object an instance of a {@link PropertyFile}-annotated class
-	 * @throws ObjectNotManagedException
-	 * @throws StorageIOException
-	 */
-	public void load(Object object) throws ObjectNotManagedException, StorageIOException {
-		if (!isManaged(object)) {
-			throw new ObjectNotManagedException(object);
-		}
+    public void saveAll() throws StorageIOException {
+        managedPropertyFiles.values().forEach(this::save);
+    }
 
-		managedPropertyFiles.get(object).load();
+    /**
+     * Loads managed property file from storage.
+     * <p>
+     * Storage is defined via the {@link PropertyFile} annotation.
+     * 
+     * @param object
+     *            object an instance of a {@link PropertyFile}-annotated class
+     * @throws ObjectNotManagedException
+     * @throws StorageIOException
+     */
+    public void load(Object object)
+            throws ObjectNotManagedException, StorageIOException {
+        if(!isManaged(object)) {
+            throw new ObjectNotManagedException(object);
+        }
 
-		logger.debug("Loaded {} from storage", object);
-	}
+        managedPropertyFiles.get(object).load();
 
-	public void loadAll() throws StorageIOException {
-		managedPropertyFiles.values().forEach(this::load);
-	}
+        logger.debug("Loaded {} from storage", object);
+    }
 
-	/**
-	 * Tells if an object is managed by this manager.
-	 * 
-	 * @param object object an instance of a {@link PropertyFile}-annotated class
-	 * @return <code>true</code> if the object is managed.
-	 */
-	public boolean isManaged(Object object) {
-		return managedPropertyFiles.containsKey(object);
-	}
+    public void loadAll() throws StorageIOException {
+        managedPropertyFiles.values().forEach(this::load);
+    }
+
+    /**
+     * Tells if an object is managed by this manager.
+     * 
+     * @param object
+     *            object an instance of a {@link PropertyFile}-annotated class
+     * @return <code>true</code> if the object is managed.
+     */
+    public boolean isManaged(Object object) {
+        return managedPropertyFiles.containsKey(object);
+    }
 }

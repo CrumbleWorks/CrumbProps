@@ -23,59 +23,75 @@ import org.slf4j.LoggerFactory;
  * @since 1.0
  */
 class PropertyFileProxy {
-	private static final Logger logger = LoggerFactory.getLogger(PropertyFileProxy.class);
 
-	private final Storage storageInstance;
+    private static final Logger logger = LoggerFactory
+            .getLogger(PropertyFileProxy.class);
 
-	private final Path pathToFile;
-	private final Set<PropertyField> propertyFields;
+    private final Storage storageInstance;
 
-	public PropertyFileProxy(Object classInstance, Converters convertersInstance, Storage storageInstance) {
-		this.storageInstance = storageInstance;
+    private final Path pathToFile;
+    private final Set<PropertyField> propertyFields;
 
-		HashMap<Class<?>, Method> convertToMethods = new HashMap<Class<?>, Method>();
-		HashMap<Class<?>, Method> convertFromMethods = new HashMap<Class<?>, Method>();
-		Class<?> convertersClass = convertersInstance.getClass();
-		for (Method method : convertersClass.getMethods()) {
-			if (method.getName().matches("^convertTo.*$")) {
-				try {
-					convertToMethods.put(method.getReturnType(), method);
-					convertFromMethods.put(method.getReturnType(), convertersClass
-							.getMethod("convertFrom" + method.getName().substring(9), method.getReturnType()));
-				} catch (NoSuchMethodException | SecurityException e) {
-					throw new MissingConversionMethodException(method.getReturnType());
-				}
-			}
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("Found converter methods for the following types: {}",
-					Arrays.toString(convertToMethods.keySet().toArray()));
-		}
+    public PropertyFileProxy(Object classInstance,
+            Converters convertersInstance, Storage storageInstance) {
+        this.storageInstance = storageInstance;
 
-		Set<Field> annotatedFields = Arrays.stream(classInstance.getClass().getFields())
-				.filter(f -> f.isAnnotationPresent(Property.class)).collect(Collectors.toSet());
-		if (logger.isDebugEnabled()) {
-			logger.debug("Found the following fields: {}", Arrays
-					.toString(annotatedFields.stream().map(f -> f.getAnnotation(Property.class).key()).toArray()));
-		}
+        HashMap<Class<?>, Method> convertToMethods = new HashMap<Class<?>, Method>();
+        HashMap<Class<?>, Method> convertFromMethods = new HashMap<Class<?>, Method>();
+        Class<?> convertersClass = convertersInstance.getClass();
+        for(Method method : convertersClass.getMethods()) {
+            if(method.getName().matches("^convertTo.*$")) {
+                try {
+                    convertToMethods.put(method.getReturnType(), method);
+                    convertFromMethods.put(method.getReturnType(),
+                            convertersClass
+                                    .getMethod(
+                                            "convertFrom" + method.getName()
+                                                    .substring(9),
+                                            method.getReturnType()));
+                } catch(NoSuchMethodException | SecurityException e) {
+                    throw new MissingConversionMethodException(
+                            method.getReturnType());
+                }
+            }
+        }
+        if(logger.isDebugEnabled()) {
+            logger.debug(
+                    "Found converter methods for the following types: {}",
+                    Arrays.toString(convertToMethods.keySet().toArray()));
+        }
 
-		PropertyFile classAnnotation = classInstance.getClass().getAnnotation(PropertyFile.class);
-		pathToFile = Paths.get(classAnnotation.fileDir(), classAnnotation.fileName());
-		logger.debug("Path of property file pointing to: {}", pathToFile);
+        Set<Field> annotatedFields = Arrays
+                .stream(classInstance.getClass().getFields())
+                .filter(f -> f.isAnnotationPresent(Property.class))
+                .collect(Collectors.toSet());
+        if(logger.isDebugEnabled()) {
+            logger.debug("Found the following fields: {}", Arrays
+                    .toString(annotatedFields.stream()
+                            .map(f -> f.getAnnotation(Property.class).key())
+                            .toArray()));
+        }
 
-		propertyFields = annotatedFields.stream().map(f -> {
-			return new PropertyField(classInstance, f, convertersInstance, convertToMethods.get(f.getType()),
-					convertFromMethods.get(f.getType()));
-		}).collect(Collectors.toSet());
-	}
+        PropertyFile classAnnotation = classInstance.getClass()
+                .getAnnotation(PropertyFile.class);
+        pathToFile = Paths.get(classAnnotation.fileDir(),
+                classAnnotation.fileName());
+        logger.debug("Path of property file pointing to: {}", pathToFile);
 
-	/* FORWARDS */
+        propertyFields = annotatedFields.stream().map(f -> {
+            return new PropertyField(classInstance, f, convertersInstance,
+                    convertToMethods.get(f.getType()),
+                    convertFromMethods.get(f.getType()));
+        }).collect(Collectors.toSet());
+    }
 
-	public void save() throws StorageIOException {
-		storageInstance.write(propertyFields, pathToFile);
-	}
+    /* FORWARDS */
 
-	public void load() throws StorageIOException {
-		storageInstance.read(propertyFields, pathToFile);
-	}
+    public void save() throws StorageIOException {
+        storageInstance.write(propertyFields, pathToFile);
+    }
+
+    public void load() throws StorageIOException {
+        storageInstance.read(propertyFields, pathToFile);
+    }
 }

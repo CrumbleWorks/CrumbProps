@@ -16,16 +16,15 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 public @interface Property {
 
-	/**
-	 * The name of the property in the file.
-	 */
-	String key();
+    /**
+     * The name of the property in the file.
+     */
+    String key();
 
-	/**
-	 * <b>Optional:</b> A default value for the property if it isn't set.
-	 * 
-	 * <p>
-	 * Empty strings are ignored / not written when saving.
-	 */
-	String defaultValue() default "";
+    /**
+     * <b>Optional:</b> A default value for the property if it isn't set.
+     * <p>
+     * Empty strings are ignored / not written when saving.
+     */
+    String defaultValue() default "";
 }

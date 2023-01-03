@@ -5,7 +5,6 @@ import org.crumbleworks.forge.crumbprops.annotations.Property;
 
 /**
  * Thrown if there's no conversion method for a specific type.
- * 
  * <p>
  * E.g. if a field with a custom type is {@link Property}-annotated, but the
  * {@link DefaultConvertersImpl} is used
@@ -15,9 +14,10 @@ import org.crumbleworks.forge.crumbprops.annotations.Property;
  */
 public class MissingConversionMethodException extends RuntimeException {
 
-	private static final long serialVersionUID = -1040902158660359732L;
+    private static final long serialVersionUID = -1040902158660359732L;
 
-	public MissingConversionMethodException(Class<?> type) {
-		super("Missing convertTo and/or convertFrom method(s) for: " + type.getName());
-	};
+    public MissingConversionMethodException(Class<?> type) {
+        super("Missing convertTo and/or convertFrom method(s) for: "
+                + type.getName());
+    };
 }

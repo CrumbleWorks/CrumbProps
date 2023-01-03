@@ -69,7 +69,7 @@ public class DefaultConvertersImpl implements Converters {
     public String convertFromLongWrap(Long value) {
         return Long.toString(value);
     }
-    
+
     /* FLOAT */
 
     public float convertToFloat(String value) {
@@ -87,7 +87,7 @@ public class DefaultConvertersImpl implements Converters {
     public String convertFromFloatWrap(Float value) {
         return Float.toString(value);
     }
-    
+
     /* DOUBLE */
 
     public double convertToDouble(String value) {

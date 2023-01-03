@@ -9,9 +9,10 @@ package org.crumbleworks.forge.crumbprops.exceptions;
  */
 public class ObjectNotManagedException extends RuntimeException {
 
-	private static final long serialVersionUID = -8380365683450802141L;
+    private static final long serialVersionUID = -8380365683450802141L;
 
-	public ObjectNotManagedException(Object object) {
-		super("Object " + object + " unmanaged. You need to 'add(..)' it to this manager first!");
-	};
+    public ObjectNotManagedException(Object object) {
+        super("Object " + object
+                + " unmanaged. You need to 'add(..)' it to this manager first!");
+    };
 }

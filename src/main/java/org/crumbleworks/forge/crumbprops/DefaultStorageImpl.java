@@ -21,41 +21,49 @@ import org.slf4j.LoggerFactory;
  * @since 1.0
  */
 public class DefaultStorageImpl implements Storage {
-	private static final Logger logger = LoggerFactory.getLogger(DefaultStorageImpl.class);
 
-	private String propertyMessage = "Created & managed using CrumbProps";
+    private static final Logger logger = LoggerFactory
+            .getLogger(DefaultStorageImpl.class);
 
-	@Override
-	public void write(Set<PropertyField> properties, Path filePath) throws StorageIOException {
-		logger.debug("Writing properties to file: {}", filePath.toAbsolutePath());
+    private String propertyMessage = "Created & managed using CrumbProps";
 
-		Properties propertyMap = new Properties();
-		for (PropertyField propertyField : properties) {
-			propertyMap.setProperty(propertyField.key(), propertyField.getStringValue());
-		}
+    @Override
+    public void write(Set<PropertyField> properties, Path filePath)
+            throws StorageIOException {
+        logger.debug("Writing properties to file: {}",
+                filePath.toAbsolutePath());
 
-		try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
-			propertyMap.store(fos, propertyMessage);
-		} catch (IOException e) {
-			throw new StorageIOException(e);
-		}
-		logger.debug("Wrote properties to: {}", filePath.toAbsolutePath());
-	}
+        Properties propertyMap = new Properties();
+        for(PropertyField propertyField : properties) {
+            propertyMap.setProperty(propertyField.key(),
+                    propertyField.getStringValue());
+        }
 
-	@Override
-	public void read(Set<PropertyField> properties, Path filePath) throws StorageIOException {
-		logger.debug("Loading properties from file: {}", filePath.toAbsolutePath());
+        try(FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
+            propertyMap.store(fos, propertyMessage);
+        } catch(IOException e) {
+            throw new StorageIOException(e);
+        }
+        logger.debug("Wrote properties to: {}", filePath.toAbsolutePath());
+    }
 
-		Properties propertyMap = new Properties();
-		try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
-			propertyMap.load(fis);
-		} catch (IOException e) {
-			throw new StorageIOException(e);
-		}
+    @Override
+    public void read(Set<PropertyField> properties, Path filePath)
+            throws StorageIOException {
+        logger.debug("Loading properties from file: {}",
+                filePath.toAbsolutePath());
 
-		for (PropertyField propertyField : properties) {
-			propertyField.setStringValue(propertyMap.getProperty(propertyField.key(), propertyField.defaultValue()));
-		}
-		logger.debug("Loaded properties from: {}", filePath.toAbsolutePath());
-	}
+        Properties propertyMap = new Properties();
+        try(FileInputStream fis = new FileInputStream(filePath.toFile())) {
+            propertyMap.load(fis);
+        } catch(IOException e) {
+            throw new StorageIOException(e);
+        }
+
+        for(PropertyField propertyField : properties) {
+            propertyField.setStringValue(propertyMap.getProperty(
+                    propertyField.key(), propertyField.defaultValue()));
+        }
+        logger.debug("Loaded properties from: {}", filePath.toAbsolutePath());
+    }
 }

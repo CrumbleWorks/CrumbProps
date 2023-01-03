@@ -11,9 +11,10 @@ import org.crumbleworks.forge.crumbprops.annotations.PropertyFile;
  */
 public class AnnotationNotPresentException extends RuntimeException {
 
-	private static final long serialVersionUID = -5598853579223488332L;
+    private static final long serialVersionUID = -5598853579223488332L;
 
-	public AnnotationNotPresentException(Class<?> type) {
-		super(type.getName() + " is missing the " + PropertyFile.class.getSimpleName() + " annotation");
-	};
+    public AnnotationNotPresentException(Class<?> type) {
+        super(type.getName() + " is missing the "
+                + PropertyFile.class.getSimpleName() + " annotation");
+    };
 }
