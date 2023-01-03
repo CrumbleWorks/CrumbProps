@@ -12,6 +12,51 @@ The library is designed to work against Java8. And will stay that way for the fo
 
 Because property files are nice, but using them is a pain. Thus I wrote this tool some 10 years ago.
 
+## How to use
+
+1. Create a POJO representing your property file.
+```
+public class UserSettings {
+
+    public Integer favouriteNumber;
+    
+    public Integer secondFavouriteNumber;
+    
+    public String bestLanguage;
+}
+```
+
+2. Annotate it
+```
+@PropertyFile(fileName = user.conf)
+public class UserSettings {
+
+    @Property(key = "favourite_number")
+    public Integer favouriteNumber;
+    
+    @Property(key = "second_favourite_number")
+    public Integer secondFavouriteNumber;
+    
+    @Property(key = "best_linguine", defaultValue = "de-CH")
+    public String bestLanguage;
+}
+```
+
+3. Load/Save/Whatever you need
+```
+UserSettings userSettings = new UserSettings();
+PropertyManager pm = new PropertyManager();
+
+//Add settings to a PropertyManager
+pm.add(userSettings);
+
+//Load settings from file
+pm.load(userSettings);
+
+//Save settings to file
+pm.save(userSettings);
+```
+
 ## Development
 
 ### Contributors
