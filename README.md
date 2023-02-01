@@ -1,4 +1,4 @@
-[![Badge Icon](https://img.shields.io/maven-central/v/org.crumbleworks.forge.crumbprops/crumbprops?style=flat-square)](https://mvnrepository.com/artifact/org.crumbleworks.forge.crumbprops/crumbprops)
+[![Badge Icon](https://img.shields.io/maven-central/v/org.crumbleworks.forge.crumbprops/CrumbProps?style=flat-square)](https://mvnrepository.com/artifact/org.crumbleworks.forge.crumbprops/CrumbProps)
 
 # CrumbProps
 
